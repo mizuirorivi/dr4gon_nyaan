@@ -42,10 +42,10 @@ def scroll_text(text, lcd):
     text_with_spaces = text.ljust(32)  # Pad the text for smooth scrolling
 
     # Begin scrolling text on the LCD
-    for i in range(len(text_with_spaces) - 15):  # Adjust range for smooth scrolling in a 16-column LCD
+    for i in range(len(text_with_spaces) - 31):  # Adjust range for smooth scrolling in a 16-column LCD
         lcd.cursor_pos = (0, 0)  # Set cursor to the top-left corner
-        lcd.write_string(text_with_spaces[i:i+16])  # Write a 16-character slice of the text
-        time.sleep(0.3)  # Control the scroll speed
+        lcd.write_string(text_with_spaces[i:i+32])  # Write a 16-character slice of the text
+        time.sleep(0.7)  # Control the scroll speed
 
     lcd.clear()
 
