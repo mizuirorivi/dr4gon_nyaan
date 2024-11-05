@@ -70,7 +70,7 @@ def scroll_text(text, lcd):
             lcd.write_string(lines[1][i:i + 16])  # Write the second row text
 
             # Wait for a while to let the user read before the next scroll
-            time.sleep(0.4)
+            time.sleep(1)
             lcd.clear()
 
         # Optional: After full scroll, refresh or continue scrolling from row 1.
@@ -87,7 +87,9 @@ try:
     status = "My local\nIP is: " + ip  # Example uses newline to split two rows.
     
     # Scroll the status message across the two-line LCD
-    scroll_text(status, lcd)
+    while True:
+        scroll_text(status, lcd)
+
 
 finally:
     # Cleanup GPIO settings to release all GPIO pins after use
