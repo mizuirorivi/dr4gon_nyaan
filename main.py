@@ -71,7 +71,6 @@ def scroll_text(text, lcd):
 
             # Wait for a while to let the user read before the next scroll
             time.sleep(1)
-            lcd.clear()
 
         # Optional: After full scroll, refresh or continue scrolling from row 1.
         time.sleep(1)  # Short pause before repeating or clearing
@@ -84,7 +83,7 @@ try:
     ip = get_wlan0_ip()
 
     # Create the message that you want to scroll with a potential line break
-    status = "My local\nIP is: " + ip  # Example uses newline to split two rows.
+    status = "My local IP is: \n" + ip  # Example uses newline to split two rows.
     
     # Scroll the status message across the two-line LCD
     while True:
