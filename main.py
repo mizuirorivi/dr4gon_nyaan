@@ -3,39 +3,62 @@ from RPLCD import CharLCD
 import time
 import netifaces
 
-# 警告を無効化
+# Suppress GPIO warnings
 GPIO.setwarnings(False)
 
-# GPIOモードをBCMに設定
+# Set GPIO mode to BCM
 GPIO.setmode(GPIO.BCM)
 
-# LCDオブジェクトを初期化
+# Initialize the LCD object
 lcd = CharLCD(cols=16, rows=2, pin_rs=18, pin_e=23, pins_data=[12, 16, 20, 21],
               numbering_mode=GPIO.BCM)
 
 def get_wlan0_ip():
+    """
+    Get the IP address associated with 'wlan0'.
+    Returns:
+        ip (str): IP address if found, else a string indicating the failure.
+    """
     try:
+        # Try fetching the IP address from the 'wlan0' interface
         return netifaces.ifaddresses('wlan0')[netifaces.AF_INET][0]['addr']
-    except (KeyError, ValueError):
+    except (KeyError, ValueError, IndexError):
+        # If there is a problem fetching the IP, return a message
         return "No IP address found for wlan0"
+    except Exception as e:
+        # Catch generic exceptions just for safety
+        return f"Error: {str(e)}"
 
 def scroll_text(text, lcd):
-    # Fill the LCD with spaces initially
+    """
+    Scrolls a given text across the LCD.
+    
+    Parameters:
+        text (str): The string to scroll on the LCD.
+        lcd (CharLCD): The LCD object.
+    """
+    # Clear the LCD and fill it with spaces initially
+    lcd.clear()    
+    text_with_spaces = text.ljust(32)  # Pad the text for smooth scrolling
+
+    # Begin scrolling text on the LCD
+    for i in range(len(text_with_spaces) - 15):  # Adjust range for smooth scrolling in a 16-column LCD
+        lcd.cursor_pos = (0, 0)  # Set cursor to the top-left corner
+        lcd.write_string(text_with_spaces[i:i+16])  # Write a 16-character slice of the text
+        time.sleep(0.3)  # Control the scroll speed
+
     lcd.clear()
-    lcd.write_string(' ' * 16)  # Fill with spaces for smooth scrolling
 
-    # Add spaces at the end of the text for scrolling effect
-    text_with_spaces = text + ' ' * 16
+try:
+    # Fetch the current WLAN0 IP address
+    ip = get_wlan0_ip()
+    
+    # Assemble the message to be displayed and scrolled on the LCD
+    status = "My local IP is " + ip
+    
+    # Scroll the message text across the LCD
+    scroll_text(status, lcd)
 
-    for i in range(len(text_with_spaces) - 15):  # Scroll through the text
-        lcd.cursor_pos = (0, 0)  # Set cursor to top left corner
-        lcd.write_string(text_with_spaces[i:i+16])  # Write the next chunk of text
-        time.sleep(0.3)  # Adjust speed of scrolling
-
-# Get IP address and start scrolling
-ip = get_wlan0_ip()
-status = "my local ip is " + ip
-scroll_text(status, lcd)
-
-# Cleanup GPIO settings on exit
-GPIO.cleanup()
+finally:
+    # Cleanup GPIO settings to release all GPIO pins after use
+    GPIO.cleanup()
