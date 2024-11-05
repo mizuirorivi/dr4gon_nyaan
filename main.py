@@ -30,22 +30,12 @@ def get_wlan0_ip():
         return f"Error: {str(e)}"
 
 def scroll_text(text, lcd):
-    """
-    Scrolls a given text across the LCD.
-    
-    Parameters:
-        text (str): The string to scroll on the LCD.
-        lcd (CharLCD): The LCD object.
-    """
-    # Clear the LCD and fill it with spaces initially
     lcd.clear()    
     text_with_spaces = text.ljust(32)  # Pad the text for smooth scrolling
 
     # Begin scrolling text on the LCD
     for i in range(len(text_with_spaces) - 31):  # Adjust range for smooth scrolling in a 16-column LCD
         lcd.cursor_pos = (0, 0)  # Set cursor to the top-left corner
-        lcd.write_string(text_with_spaces[i:i+32])  # Write a 16-character slice of the text
-        time.sleep(0.7)  # Control the scroll speed
 
     lcd.clear()
 
@@ -54,7 +44,7 @@ try:
     ip = get_wlan0_ip()
     
     # Assemble the message to be displayed and scrolled on the LCD
-    status = "My local IP is " + ip
+    status = "My local IP is \n" + ip
     
     # Scroll the message text across the LCD
     scroll_text(status, lcd)
