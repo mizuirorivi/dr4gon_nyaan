@@ -1,5 +1,9 @@
 import RPi.GPIO as GPIO
 from RPLCD import CharLCD
+import time
+
+# 警告を無効化
+GPIO.setwarnings(False)
 
 # GPIOモードをBCMに設定
 GPIO.setmode(GPIO.BCM)
@@ -14,11 +18,18 @@ try:
     
     # "Hello world!"を表示
     lcd.write_string("Hello world!")
+    
+    # 表示を確認するための待機時間
+    time.sleep(5)
 
 except KeyboardInterrupt:
-    pass
+    print("プログラムが中断されました")
+
+except Exception as e:
+    print(f"エラーが発生しました: {e}")
 
 finally:
     # クリーンアップ
     lcd.close(clear=True)
     GPIO.cleanup()
+    print("GPIOをクリーンアップしました")
